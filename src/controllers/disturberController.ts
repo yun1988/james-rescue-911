@@ -16,7 +16,7 @@ export async function reportDisturbance(
   payload: DisturbancePayload,
   source: EventSource = 'web'
 ): Promise<DisturbanceEvent | null> {
-  const { who, level = 'Emergency' } = payload;
+  const { who, level = 'Emergency', message } = payload;
 
   return disturberService.insertDisturbance({
     disturber_name: who,
@@ -24,6 +24,7 @@ export async function reportDisturbance(
     description: getDisturberDescription(who),
     source,
     level,
+    conversation: message ?? null,
   });
 }
 

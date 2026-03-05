@@ -9,6 +9,7 @@ export interface InsertDisturbanceInput {
   description?: string | null;
   source: EventSource;
   level: string;
+  conversation?: string | null;
 }
 
 export async function insertDisturbance(input: InsertDisturbanceInput): Promise<DisturbanceEvent | null> {
@@ -20,6 +21,7 @@ export async function insertDisturbance(input: InsertDisturbanceInput): Promise<
       description: input.description ?? null,
       source: input.source,
       level: input.level,
+      conversation: input.conversation ?? null,
     })
     .select()
     .single();
