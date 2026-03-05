@@ -37,13 +37,13 @@ export async function getTimeDistribution(): Promise<TimeSlotData[]> {
 
   const events = await disturberService.getEventsSince(start, end);
 
-  // Map key: `${disturber_name}-${hour}`, aggregated across all days
-  const slotMap = new Map<string, { count: number; disturber_name: string; hour: number }>();
+  // Map key: `${disturber_name}-${date}`, aggregated by day
+  const slotMap = new Map<string, { count: number; disturber_name: string; date: string }>();
 
   for (const e of events) {
     const d = new Date(e.timestamp);
-    const hour = d.getHours();
-    const key = `${e.disturber_name}-${hour}`;
+    const dateKey = d.toISOString().slice(0, 10); // YYYY-MM-DD
+    const key = `${e.disturber_name}-${dateKey}`;
 
     const existing = slotMap.get(key);
     if (existing) {
@@ -52,7 +52,7 @@ export async function getTimeDistribution(): Promise<TimeSlotData[]> {
       slotMap.set(key, {
         count: 1,
         disturber_name: e.disturber_name,
-        hour,
+        date: dateKey,
       });
     }
   }
@@ -61,14 +61,14 @@ export async function getTimeDistribution(): Promise<TimeSlotData[]> {
   slotMap.forEach((v) => {
     result.push({
       dayOfWeek: 0,
-      hour: v.hour,
-      label: `${v.hour.toString().padStart(2, '0')}:00`,
+      hour: 0,
+      label: v.date,
       count: v.count,
       disturber_name: v.disturber_name,
     });
   });
 
-  // Sort by hour ascending so X 軸從 00:00 → 23:00
-  result.sort((a, b) => a.hour - b.hour);
+  // Sort by date ascending
+  result.sort((a, b) => a.label.localeCompare(b.label));
   return result;
 }

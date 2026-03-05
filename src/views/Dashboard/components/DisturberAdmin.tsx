@@ -79,7 +79,7 @@ export function DisturberAdmin() {
             <input
               value={form.code}
               onChange={(e) => handleChange('code', e.target.value)}
-              className="mt-1 w-full rounded-md border border-slate-300 px-2 py-1 text-sm dark:border-slate-700 dark:bg-slate-900"
+              className="mt-1 w-full rounded-md border border-slate-300 px-2 py-1 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
               placeholder="例如：Todd"
             />
           </div>
@@ -90,7 +90,7 @@ export function DisturberAdmin() {
             <input
               value={form.display_name}
               onChange={(e) => handleChange('display_name', e.target.value)}
-              className="mt-1 w-full rounded-md border border-slate-300 px-2 py-1 text-sm dark:border-slate-700 dark:bg-slate-900"
+              className="mt-1 w-full rounded-md border border-slate-300 px-2 py-1 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
               placeholder="例如：Todd"
             />
           </div>
@@ -113,7 +113,7 @@ export function DisturberAdmin() {
           <input
             value={form.description}
             onChange={(e) => handleChange('description', e.target.value)}
-            className="mt-1 w-full rounded-md border border-slate-300 px-2 py-1 text-sm dark:border-slate-700 dark:bg-slate-900"
+            className="mt-1 w-full rounded-md border border-slate-300 px-2 py-1 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
             placeholder="例如：常在下午兩點出沒，會問設計問題"
           />
         </div>

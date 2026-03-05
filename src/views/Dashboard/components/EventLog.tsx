@@ -38,7 +38,7 @@ export function EventLog() {
                 <span className="flex-1 truncate text-slate-700 dark:text-slate-200">
                   {formatTimestamp(event.timestamp)}
                 </span>
-                <span className="text-xs font-medium uppercase text-slate-600 dark:text-slate-300">
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
                   {event.disturber_name}
                 </span>
               </div>
