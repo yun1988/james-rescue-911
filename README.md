@@ -2,6 +2,13 @@
 
 騷擾事件監控儀表板 - AIoT 整合專案
 
+## 連結
+
+- **GitHub Repo**: https://github.com/yun1988/james-rescue-911
+- **Vercel 部署**: https://james-rescue-911.vercel.app
+
+> 提醒：如果之後你在 Vercel 上改了 Project 名稱或 Domain，記得同步更新這兩條連結。
+
 ## 技術棧
 
 - **前端**: Vite + React 18 + TypeScript + Tailwind CSS + Recharts
@@ -34,6 +41,15 @@ VITE_SUPABASE_ANON_KEY=your_anon_key
 ```bash
 npm run dev
 ```
+
+### 4. GitHub / Vercel 自動部署
+
+- 此專案已連接 GitHub Repo `yun1988/james-rescue-911`，並由 Vercel 自動部署。
+- **推到 `main`：**
+  - 每次 `git push origin main`，Vercel 會自動重新 build + 部署 Production，網址不變。
+- **其他分支（例如 `feature/*`）：**
+  - `git push origin feature/xxx` 後，Vercel 會自動建立 Preview Deployment，會有一個預覽網址，只影響該分支。
+- 不需要在 Vercel 手動重建，只要透過 Git commit + push 就會觸發。
 
 ## 專案結構 (VHC)
 
