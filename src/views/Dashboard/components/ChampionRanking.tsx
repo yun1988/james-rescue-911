@@ -11,10 +11,10 @@ const RANK_EMOJI = ['🥇', '🥈', '🥉'];
 
 function RankRow({ entry }: { entry: ChampionEntry }) {
   return (
-    <div className="flex items-center justify-between rounded-lg bg-slate-100 px-4 py-2 dark:bg-slate-800">
+    <div className="flex items-center justify-between rounded-lg bg-slate-100 px-4 py-2 text-slate-800 dark:bg-slate-800 dark:text-slate-50">
       <span className="text-lg">{RANK_EMOJI[entry.rank - 1] ?? entry.rank}</span>
       <span className="font-semibold">{entry.disturber_name}</span>
-      <span className="text-slate-600 dark:text-slate-400">{entry.count} 次</span>
+      <span className="text-slate-600 dark:text-slate-300">{entry.count} 次</span>
     </div>
   );
 }

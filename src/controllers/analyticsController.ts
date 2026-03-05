@@ -1,30 +1,24 @@
 import * as disturberService from '../services/supabase/disturberService';
 import { getPeriodBounds } from '../lib/utils';
-import type {
-  ChampionEntry,
-  TimeSlotData,
-  PeriodType,
-  DisturberName,
-} from '../types/disturber.types';
-
-const DISTURBERS: DisturberName[] = ['B', 'Todd', 'CJ'];
+import type { ChampionEntry, TimeSlotData, PeriodType, DisturberCode } from '../types/disturber.types';
 
 export async function getChampions(period: PeriodType): Promise<ChampionEntry[]> {
   const { start, end } = getPeriodBounds(period);
   const events = await disturberService.getEventsSince(start, end);
+  const disturbers = await disturberService.getActiveDisturbers();
 
-  const counts = new Map<DisturberName, number>();
-  for (const d of DISTURBERS) {
-    counts.set(d, 0);
+  const counts = new Map<DisturberCode, number>();
+  for (const d of disturbers) {
+    counts.set(d.code, 0);
   }
   for (const e of events) {
-    const name = e.disturber_name as DisturberName;
-    counts.set(name, (counts.get(name) ?? 0) + 1);
+    const code = e.disturber_name as DisturberCode;
+    counts.set(code, (counts.get(code) ?? 0) + 1);
   }
 
-  const entries: ChampionEntry[] = DISTURBERS.map((name) => ({
-    disturber_name: name,
-    count: counts.get(name) ?? 0,
+  const entries: ChampionEntry[] = disturbers.map((d) => ({
+    disturber_name: d.display_name,
+    count: counts.get(d.code) ?? 0,
     rank: 0,
   }));
 
@@ -43,13 +37,13 @@ export async function getTimeDistribution(): Promise<TimeSlotData[]> {
 
   const events = await disturberService.getEventsSince(start, end);
 
-  // Map key: `${disturber_name}-${hour}`, aggregated across all days
-  const slotMap = new Map<string, { count: number; disturber_name: DisturberName; hour: number }>();
+  // Map key: `${disturber_name}-${date}`, aggregated by day
+  const slotMap = new Map<string, { count: number; disturber_name: string; date: string }>();
 
   for (const e of events) {
     const d = new Date(e.timestamp);
-    const hour = d.getHours();
-    const key = `${e.disturber_name}-${hour}`;
+    const dateKey = d.toISOString().slice(0, 10); // YYYY-MM-DD
+    const key = `${e.disturber_name}-${dateKey}`;
 
     const existing = slotMap.get(key);
     if (existing) {
@@ -57,8 +51,8 @@ export async function getTimeDistribution(): Promise<TimeSlotData[]> {
     } else {
       slotMap.set(key, {
         count: 1,
-        disturber_name: e.disturber_name as DisturberName,
-        hour,
+        disturber_name: e.disturber_name,
+        date: dateKey,
       });
     }
   }
@@ -67,14 +61,14 @@ export async function getTimeDistribution(): Promise<TimeSlotData[]> {
   slotMap.forEach((v) => {
     result.push({
       dayOfWeek: 0,
-      hour: v.hour,
-      label: `${v.hour.toString().padStart(2, '0')}:00`,
+      hour: 0,
+      label: v.date,
       count: v.count,
       disturber_name: v.disturber_name,
     });
   });
 
-  // Sort by hour ascending so X 軸從 00:00 → 23:00
-  result.sort((a, b) => a.hour - b.hour);
+  // Sort by date ascending
+  result.sort((a, b) => a.label.localeCompare(b.label));
   return result;
 }

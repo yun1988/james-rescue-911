@@ -1,8 +1,29 @@
--- James-Rescue-911: disturbance_events table
+-- James-Rescue-911: core tables
+
+-- Disturbers (騷擾成員設定)
+CREATE TABLE IF NOT EXISTS disturbers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  code TEXT UNIQUE NOT NULL,
+  display_name TEXT NOT NULL,
+  color TEXT NOT NULL,
+  description TEXT,
+  is_active BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+-- Seed default disturbers (idempotent)
+INSERT INTO disturbers (code, display_name, color, description)
+VALUES
+  ('B', 'B', '#f59e0b', 'B 的騷擾需求說明'),
+  ('Todd', 'Todd', '#f43f5e', 'Todd 的騷擾需求說明'),
+  ('CJ', 'CJ', '#8b5cf6', 'CJ 的騷擾需求說明')
+ON CONFLICT (code) DO NOTHING;
+
+-- Disturbance events
 CREATE TABLE IF NOT EXISTS disturbance_events (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  disturber_name TEXT NOT NULL CHECK (disturber_name IN ('B', 'Todd', 'CJ')),
+  disturber_id UUID REFERENCES disturbers(id),
+  disturber_name TEXT NOT NULL,
   request_type TEXT NOT NULL DEFAULT 'Emergency' CHECK (request_type IN ('Emergency', 'Normal', 'Low')),
   description TEXT,
   conversation TEXT,

@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { reportDisturbance as reportDisturbanceController } from '../controllers/disturberController';
-import type { DisturbancePayload, DisturberName } from '../types/disturber.types';
+import type { DisturbancePayload, DisturberCode } from '../types/disturber.types';
 
 export function useDisturberInteraction() {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +23,7 @@ export function useDisturberInteraction() {
 
   const reportByDisturber = useCallback(
     (
-      who: DisturberName,
+      who: DisturberCode,
       level: 'Emergency' | 'Normal' | 'Low' = 'Emergency',
       message?: string
     ) => {

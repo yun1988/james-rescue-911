@@ -1,16 +1,5 @@
 import * as disturberService from '../services/supabase/disturberService';
-import type {
-  DisturbanceEvent,
-  DisturbancePayload,
-  DisturberName,
-  EventSource,
-} from '../types/disturber.types';
-
-const DISTURBER_DESCRIPTIONS: Record<DisturberName, string> = {
-  B: 'B 的騷擾需求說明',
-  Todd: 'Todd 的騷擾需求說明',
-  CJ: 'CJ 的騷擾需求說明',
-};
+import type { DisturbanceEvent, DisturbancePayload, EventSource } from '../types/disturber.types';
 
 export async function reportDisturbance(
   payload: DisturbancePayload,
@@ -19,15 +8,11 @@ export async function reportDisturbance(
   const { who, level = 'Emergency', message } = payload;
 
   return disturberService.insertDisturbance({
-    disturber_name: who,
+    disturber_code: who,
     request_type: level,
-    description: getDisturberDescription(who),
+    description: null,
     source,
     level,
     conversation: message ?? null,
   });
-}
-
-export function getDisturberDescription(name: DisturberName): string {
-  return DISTURBER_DESCRIPTIONS[name] ?? '';
 }

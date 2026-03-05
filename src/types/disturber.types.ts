@@ -1,4 +1,13 @@
-export type DisturberName = 'B' | 'Todd' | 'CJ';
+export type DisturberCode = string;
+
+export interface Disturber {
+  id: string;
+  code: DisturberCode;
+  display_name: string;
+  color: string;
+  description: string | null;
+  is_active: boolean;
+}
 
 export type RequestType = 'Emergency' | 'Normal' | 'Low';
 
@@ -7,7 +16,8 @@ export type EventSource = 'web' | 'webhook' | 'mqtt';
 export interface DisturbanceEvent {
   id: string;
   timestamp: string;
-  disturber_name: DisturberName;
+  disturber_id: string | null;
+  disturber_name: string;
   request_type: RequestType;
   description: string | null;
   source: EventSource;
@@ -16,13 +26,13 @@ export interface DisturbanceEvent {
 }
 
 export interface DisturbancePayload {
-  who: DisturberName;
+  who: DisturberCode;
   level?: RequestType;
   message?: string;
 }
 
 export interface ChampionEntry {
-  disturber_name: DisturberName;
+  disturber_name: string;
   count: number;
   rank: number;
 }
@@ -32,7 +42,7 @@ export interface TimeSlotData {
   hour: number;
   label: string;
   count: number;
-  disturber_name: DisturberName;
+  disturber_name: string;
 }
 
 export type PeriodType = 'week' | 'month' | 'quarter';
