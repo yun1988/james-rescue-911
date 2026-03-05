@@ -9,40 +9,26 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useTimeAnalysis } from '../../../hooks/useTimeAnalysis';
-import type { TimeSlotData } from '../../../types/disturber.types';
 
-const DISTURBER_COLORS: Record<string, string> = {
-  B: '#f59e0b',
-  Todd: '#f43f5e',
-  CJ: '#8b5cf6',
-};
-
-interface ChartRow {
-  slot: string;
-  B?: number;
-  Todd?: number;
-  CJ?: number;
-}
-
-function formatChartData(rows: TimeSlotData[]): ChartRow[] {
-  const bySlot = new Map<string, ChartRow>();
-
-  for (const r of rows) {
-    const key = r.label;
-    if (!bySlot.has(key)) {
-      bySlot.set(key, { slot: key });
-    }
-    const row = bySlot.get(key)!;
-    row[r.disturber_name] = r.count;
-  }
-
-  return Array.from(bySlot.values()).sort((a, b) => a.slot.localeCompare(b.slot));
+function formatChartData(rows: { label: string; count: number }[]) {
+  return [...rows].sort((a, b) => a.label.localeCompare(b.label));
 }
 
 export function TimeDistributionChart() {
   const { timeDistribution, loading } = useTimeAnalysis();
 
-  const chartData = formatChartData(timeDistribution);
+  const aggregated = Object.values(
+    timeDistribution.reduce<Record<string, { label: string; count: number }>>((acc, row) => {
+      const key = row.label;
+      if (!acc[key]) {
+        acc[key] = { label: key, count: 0 };
+      }
+      acc[key].count += row.count;
+      return acc;
+    }, {})
+  );
+
+  const chartData = formatChartData(aggregated);
 
   if (loading) {
     return (
@@ -80,30 +66,7 @@ export function TimeDistributionChart() {
               }}
             />
             <Legend />
-            <Line
-              type="monotone"
-              dataKey="B"
-              stroke={DISTURBER_COLORS.B}
-              name="B"
-              strokeWidth={2}
-              dot={{ r: 3 }}
-            />
-            <Line
-              type="monotone"
-              dataKey="Todd"
-              stroke={DISTURBER_COLORS.Todd}
-              name="Todd"
-              strokeWidth={2}
-              dot={{ r: 3 }}
-            />
-            <Line
-              type="monotone"
-              dataKey="CJ"
-              stroke={DISTURBER_COLORS.CJ}
-              name="CJ"
-              strokeWidth={2}
-              dot={{ r: 3 }}
-            />
+            <Line type="monotone" dataKey="count" stroke="#fb7185" name="次數" strokeWidth={2} dot={{ r: 3 }} />
           </LineChart>
         </ResponsiveContainer>
       </div>

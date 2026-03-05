@@ -1,30 +1,24 @@
 import * as disturberService from '../services/supabase/disturberService';
 import { getPeriodBounds } from '../lib/utils';
-import type {
-  ChampionEntry,
-  TimeSlotData,
-  PeriodType,
-  DisturberName,
-} from '../types/disturber.types';
-
-const DISTURBERS: DisturberName[] = ['B', 'Todd', 'CJ'];
+import type { ChampionEntry, TimeSlotData, PeriodType, DisturberCode } from '../types/disturber.types';
 
 export async function getChampions(period: PeriodType): Promise<ChampionEntry[]> {
   const { start, end } = getPeriodBounds(period);
   const events = await disturberService.getEventsSince(start, end);
+  const disturbers = await disturberService.getActiveDisturbers();
 
-  const counts = new Map<DisturberName, number>();
-  for (const d of DISTURBERS) {
-    counts.set(d, 0);
+  const counts = new Map<DisturberCode, number>();
+  for (const d of disturbers) {
+    counts.set(d.code, 0);
   }
   for (const e of events) {
-    const name = e.disturber_name as DisturberName;
-    counts.set(name, (counts.get(name) ?? 0) + 1);
+    const code = e.disturber_name as DisturberCode;
+    counts.set(code, (counts.get(code) ?? 0) + 1);
   }
 
-  const entries: ChampionEntry[] = DISTURBERS.map((name) => ({
-    disturber_name: name,
-    count: counts.get(name) ?? 0,
+  const entries: ChampionEntry[] = disturbers.map((d) => ({
+    disturber_name: d.display_name,
+    count: counts.get(d.code) ?? 0,
     rank: 0,
   }));
 
@@ -44,7 +38,7 @@ export async function getTimeDistribution(): Promise<TimeSlotData[]> {
   const events = await disturberService.getEventsSince(start, end);
 
   // Map key: `${disturber_name}-${hour}`, aggregated across all days
-  const slotMap = new Map<string, { count: number; disturber_name: DisturberName; hour: number }>();
+  const slotMap = new Map<string, { count: number; disturber_name: string; hour: number }>();
 
   for (const e of events) {
     const d = new Date(e.timestamp);
@@ -57,7 +51,7 @@ export async function getTimeDistribution(): Promise<TimeSlotData[]> {
     } else {
       slotMap.set(key, {
         count: 1,
-        disturber_name: e.disturber_name as DisturberName,
+        disturber_name: e.disturber_name,
         hour,
       });
     }
