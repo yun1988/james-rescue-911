@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS disturbance_events (
   disturber_name TEXT NOT NULL CHECK (disturber_name IN ('B', 'Todd', 'CJ')),
   request_type TEXT NOT NULL DEFAULT 'Emergency' CHECK (request_type IN ('Emergency', 'Normal', 'Low')),
   description TEXT,
+  conversation TEXT,
   source TEXT NOT NULL DEFAULT 'web' CHECK (source IN ('web', 'webhook', 'mqtt')),
   level TEXT NOT NULL DEFAULT 'Emergency'
 );
@@ -25,3 +26,6 @@ CREATE POLICY "Allow public read" ON disturbance_events
 
 CREATE POLICY "Allow public insert" ON disturbance_events
   FOR INSERT WITH CHECK (true);
+
+-- 如果資料表已存在且需要加入對話欄位，請在 Supabase SQL Editor 執行：
+-- ALTER TABLE disturbance_events ADD COLUMN IF NOT EXISTS conversation TEXT;

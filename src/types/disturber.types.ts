@@ -12,11 +12,13 @@ export interface DisturbanceEvent {
   description: string | null;
   source: EventSource;
   level: string;
+  conversation?: string | null;
 }
 
 export interface DisturbancePayload {
   who: DisturberName;
   level?: RequestType;
+  message?: string;
 }
 
 export interface ChampionEntry {

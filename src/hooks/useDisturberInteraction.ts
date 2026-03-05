@@ -22,8 +22,12 @@ export function useDisturberInteraction() {
   }, []);
 
   const reportByDisturber = useCallback(
-    (who: DisturberName, level: 'Emergency' | 'Normal' | 'Low' = 'Emergency') => {
-      return reportDisturbance({ who, level });
+    (
+      who: DisturberName,
+      level: 'Emergency' | 'Normal' | 'Low' = 'Emergency',
+      message?: string
+    ) => {
+      return reportDisturbance({ who, level, message });
     },
     [reportDisturbance]
   );
