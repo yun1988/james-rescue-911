@@ -3,6 +3,7 @@ import { CounterCards } from './components/CounterCards';
 import { ChampionRanking } from './components/ChampionRanking';
 import { TimeDistributionChart } from './components/TimeDistributionChart';
 import { EventLog } from './components/EventLog';
+import { DisturberAdmin } from './components/DisturberAdmin';
 
 export function DashboardView() {
   return (
@@ -37,8 +38,13 @@ export function DashboardView() {
           </div>
         </section>
 
-        <section>
-          <TimeDistributionChart />
+        <section className="grid gap-8 lg:grid-cols-2">
+          <div>
+            <TimeDistributionChart />
+          </div>
+          <div>
+            <DisturberAdmin />
+          </div>
         </section>
       </main>
     </div>
