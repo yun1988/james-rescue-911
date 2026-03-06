@@ -4,8 +4,7 @@ import { getActiveDisturbers } from '../../../services/supabase/disturberService
 import { supabase } from '../../../services/supabase/client';
 
 interface FormState {
-  code: string;
-  display_name: string;
+  name: string;
   color: string;
   description: string;
 }
@@ -13,8 +12,7 @@ interface FormState {
 export function DisturberAdmin() {
   const [disturbers, setDisturbers] = useState<Disturber[]>([]);
   const [form, setForm] = useState<FormState>({
-    code: '',
-    display_name: '',
+    name: '',
     color: '#f97316',
     description: '',
   });
@@ -36,16 +34,17 @@ export function DisturberAdmin() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.code || !form.display_name) {
-      setError('代號與顯示名稱必填');
+    const displayName = form.name.trim();
+    if (!displayName) {
+      setError('名稱為必填');
       return;
     }
     setIsSaving(true);
     setError(null);
     try {
       const { error: insertError } = await supabase.from('disturbers').insert({
-        code: form.code,
-        display_name: form.display_name,
+        code: displayName,
+        display_name: displayName,
         color: form.color,
         description: form.description || null,
         is_active: true,
@@ -53,7 +52,7 @@ export function DisturberAdmin() {
       if (insertError) {
         setError(insertError.message);
       } else {
-        setForm({ code: '', display_name: '', color: '#f97316', description: '' });
+        setForm({ name: '', color: '#f97316', description: '' });
         await refresh();
       }
     } catch (err) {
@@ -74,22 +73,11 @@ export function DisturberAdmin() {
         <div className="flex gap-3">
           <div className="flex-1">
             <label className="block text-xs font-medium text-slate-600 dark:text-slate-300">
-              代號（code）
+              名稱
             </label>
             <input
-              value={form.code}
-              onChange={(e) => handleChange('code', e.target.value)}
-              className="mt-1 w-full rounded-md border border-slate-300 px-2 py-1 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-              placeholder="例如：Todd"
-            />
-          </div>
-          <div className="flex-1">
-            <label className="block text-xs font-medium text-slate-600 dark:text-slate-300">
-              顯示名稱
-            </label>
-            <input
-              value={form.display_name}
-              onChange={(e) => handleChange('display_name', e.target.value)}
+              value={form.name}
+              onChange={(e) => handleChange('name', e.target.value)}
               className="mt-1 w-full rounded-md border border-slate-300 px-2 py-1 text-sm text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
               placeholder="例如：Todd"
             />
@@ -135,7 +123,6 @@ export function DisturberAdmin() {
               style={{ backgroundColor: d.color }}
             />
             <span className="font-semibold">{d.display_name}</span>
-            <span className="text-[11px] text-slate-500">({d.code})</span>
           </div>
         ))}
       </div>

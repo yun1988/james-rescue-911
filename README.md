@@ -36,6 +36,9 @@ VITE_SUPABASE_ANON_KEY=your_anon_key
 3. 在 Supabase SQL Editor 執行 `supabase/migrations/001_create_disturbance_events.sql`
 4. 在 Database > Replication 中將 `disturbance_events` 加入 Realtime 訂閱
 
+   **若曾手動加過 `disturbance_events_disturber_name_check` 導致新增成員／按 M 時 400**：再執行 001 一次（最後一段會移除該 constraint），或只執行：  
+   `ALTER TABLE disturbance_events DROP CONSTRAINT IF EXISTS disturbance_events_disturber_name_check;`
+
 ### 3. 啟動開發伺服器
 
 ```bash
@@ -65,7 +68,7 @@ src/
 
 ## 核心功能
 
-- **騷擾大軍按鈕**: B、Todd、CJ 快速點擊，每擊發送 `{ who, level: "Emergency" }`
+- **騷擾大軍按鈕**: B、Todd、CJ、M 快速點擊，每擊發送 `{ who, level: "Emergency" }`
 - **總計數器**: 今日 / 本週 / 本月騷擾次數（即時更新）
 - **冠軍排行榜**: 週 / 月 / 季冠軍
 - **時段分佈圖**: 分析哪個時段最常被騷擾
